@@ -1,35 +1,36 @@
-import { Route, To } from 'react-router-dom';
 
-function RouteWrapper({
-    component: Component,
-    isPrived,
-    ...rest
-}) {
-    const loading = false;
-    const signed = false;
+import { Route, Redirect } from 'react-router-dom';
 
-    if(loading) {
-        return (
-            <div></div>
-        );
-    };
+export default function RouteWrapper({
+  component: Component,
+  isPrivate,
+  ...rest
+}){
 
-    if(!signed && isPrived) {
-        return <To to="/" />
-    };
+  const loading = false;
+  const signed = false;
 
-    if(signed && !isPrived) {
-        return <To to="/dashboard" />
-    };
+  if(loading){
+    return(
+      <div></div>
+    )
+  }
 
-    return (
-        <Route 
-            {...rest}
-            render={props => (
-                <Component {...props} />
-            )}
-        />
-    );
-};
+  if(!signed && isPrivate){
+    return <Redirect to="/" />
+  }
 
-export default RouteWrapper;
+  if(signed && !isPrivate){
+    return <Redirect to="/dashboard" />
+  }
+
+
+  return(
+    <Route
+      {...rest}
+      render={ props => (
+        <Component {...props} />
+      )}
+    />
+  )
+}

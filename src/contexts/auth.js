@@ -23,8 +23,48 @@ function AuthProvider({ children }) {
         loadStorage();
     }, []);
 
+    async function signUp(email, password, name) {
+        setLoadingAuth(true);
+        await firebase.auth().createUserWithEmailAndPassword(email, password)
+         .then( async (value) => {
+            let uid = value.user.uid;
+
+            await firebase.firestore().collection('users')
+             .doc(uid).set({
+                name: name,
+                avatarUrl: null,
+             })
+             .then(() => {
+                let data = {
+                  uid: uid,
+                  name: name,
+                  email: value.user.email,
+                  avatarUrl: null,
+                };
+
+                setUser(data);
+                storageUser(data);
+                setLoadingAuth(false);
+             });
+         })
+         .catch((error) => {
+            console.log(error);
+            setLoadingAuth(false);
+         });
+    };
+
+    function storageUser(data) {
+        localStorage.setItem('SistemaUser', JSON.stringify(data));
+    };
+
     return (
-        <AuthContext.Provider value={{ signed: !!user, user, loading }} >
+        <AuthContext.Provider 
+         value={{ 
+            signed: !!user, 
+            user, 
+            loading, 
+            signUp 
+        }} >
             {children}
         </AuthContext.Provider>
     );

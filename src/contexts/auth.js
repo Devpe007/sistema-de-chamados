@@ -43,9 +43,11 @@ function AuthProvider({ children }) {
             setUser(data);
             storageUser(data);
             setLoadingAuth(false);
+            toast.success('Bem-vindo de volta! :)');
          })
          .catch((error) => {
             console.log(error);
+            toast.error('Ops! algo deu errado');
             setLoadingAuth(false);
          });
     };

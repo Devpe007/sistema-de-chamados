@@ -23,12 +23,12 @@ function Header() {
             Chamados
           </Link>
 
-          <Link to="/dashboard" >
+          <Link to="/customers" >
             <FiUser color="#fff" size={24}/>
             Clients
           </Link>
 
-          <Link to="/dashboard" >
+          <Link to="/profile" >
             <FiSettings color="#fff" size={24}/>
             Configurações
           </Link>

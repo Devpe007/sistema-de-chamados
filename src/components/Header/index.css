@@ -60,3 +60,35 @@
 .sidebar a svg {
     margin-right: 0.5em;
 }
+
+@media screen and (max-width: 700px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+
+        position: relative;
+    }
+
+    .sidebar a {
+        float: left;
+    }
+
+    .sidebar div {
+        display: none;
+    }
+
+    .sidebar a svg {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .sidebar a {
+        text-align: center;
+        float: none;
+    }
+
+    .sidebar a svg {
+        display: none;
+    }
+}

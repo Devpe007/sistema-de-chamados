@@ -12,7 +12,7 @@ import Title from '../../components/Title';
 import { AuthContext } from '../../contexts/auth';
 
 function Profile() {
-    const { user } = useContext(AuthContext);
+    const { user, signOut } = useContext(AuthContext);
 
     const [name, setName] = useState(user && user.name);
     const [email, setEmail] = useState(user && user.email);
@@ -57,7 +57,7 @@ function Profile() {
                 </div>
 
                 <div className="container" >
-                    <button className="logout-btn" >
+                    <button className="logout-btn" onClick={() => signOut()} >
                         Sair
                     </button>
                 </div>

@@ -9,15 +9,38 @@ import { FiSettings, FiUpload } from 'react-icons/fi';
 import Header from '../../components/Header';
 import Title from '../../components/Title';
 
+import firebase from "../../connections/firebaseConnection";
 import { AuthContext } from '../../contexts/auth';
 
 function Profile() {
-    const { user, signOut } = useContext(AuthContext);
+    const { user, signOut, setUser, storageUser } = useContext(AuthContext);
 
     const [name, setName] = useState(user && user.name);
     const [email, setEmail] = useState(user && user.email);
 
     const [avatarUrl, setAvatarUrl] = useState(user && user.avatarUrl);
+    const [imageAvatar, setImageAvatar] = useState(null);
+
+    async function handleSave(event) {
+        event.preventDefault();
+
+        if(imageAvatar === null && name !== '') {
+            await firebase.firestore().collection('users')
+             .doc(user.uid)
+             .update({
+                name: name,
+             })
+             .then(() => {
+                let data = {
+                  ...user,
+                  name: name,
+                };
+                
+                setUser(data);
+                storageUser(data);
+             });;
+        };
+    };
 
     return (
         <div>
@@ -29,7 +52,7 @@ function Profile() {
                 </Title>
 
                 <div className="container" >
-                    <form className="form-profile" >
+                    <form className="form-profile" onSubmit={handleSave} >
                         <label className="label-avatar">
                             <span>
                                 <FiUpload color="#fff" size={25} />

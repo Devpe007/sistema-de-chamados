@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import { toast } from 'react-toastify';
 
 import './index.css';
 
@@ -21,6 +22,55 @@ function Profile() {
     const [avatarUrl, setAvatarUrl] = useState(user && user.avatarUrl);
     const [imageAvatar, setImageAvatar] = useState(null);
 
+    function handleFile(event) {
+        if(event.target.files[0]) {
+            const image = event.target.files[0];
+
+            if(image.type === 'image/jpeg' || image.type === 'image/png') {
+                setImageAvatar(image);
+                setAvatarUrl(URL.createObjectURL(event.target.files[0]));
+            } else {
+                toast.error('Tipo da imagem não suportado!');
+                setImageAvatar(null);
+                
+                return null;
+            };
+        };
+    };
+
+    async function handleUpload() {
+        const currentUid = user.uid;
+
+        const uploadTask = await firebase.storage().ref(`images/${currentUid}/${imageAvatar.name}`)
+         .put(imageAvatar)
+         .then( async () => {
+            toast.success('Upload conccluido com sucesso!');
+
+            await firebase.storage().ref(`images/${currentUid}`)
+             .child(imageAvatar.name).getDownloadURL()
+              .then( async (url) => {
+                let urlPhoto = url;
+
+                await firebase.firestore().collection('users')
+                 .doc(user.uid)
+                 .update({
+                    avatarUrl: urlPhoto,
+                    name: name,
+                 })
+                 .then(() => {
+                    let data = {
+                        ...user,
+                        avatarUrl: urlPhoto,
+                        name: name,
+                    };
+
+                    setUser(data);
+                    storageUser(data);
+                 });
+              });
+         });
+    };
+
     async function handleSave(event) {
         event.preventDefault();
 
@@ -35,10 +85,12 @@ function Profile() {
                   ...user,
                   name: name,
                 };
-                
+
                 setUser(data);
                 storageUser(data);
              });;
+        } else if(name !== '' && imageAvatar !== null) {
+            handleUpload();
         };
     };
 
@@ -58,7 +110,7 @@ function Profile() {
                                 <FiUpload color="#fff" size={25} />
                             </span>
 
-                            <input type="file" accept="image/*" />
+                            <input type="file" accept="image/*" onChange={handleFile} />
                             <br />
 
                             { avatarUrl === null 

@@ -58,9 +58,28 @@ function New() {
         loadCustomers();
     }, []);
 
-    function handleRegister(event) {
+    async function handleRegister(event) {
         event.preventDefault();
-        alert('CLICOU');
+        
+        await firebase.firestore().collection('calls')
+         .add({
+            created: new Date(),
+            client: customers[customerSelected].copanyName,
+            clientId: customers[customerSelected].id,
+            subjectMatter: subjectMatter,
+            status: status,
+            complement: complement,
+            userId: user,
+         })
+         .then(() => {
+            toast.success('Chamado registrado com sucesso!');
+            setComplement('');
+            setCustomerSelected(0);
+         })
+         .catch((error) => {
+            toast.error('Ops, erro ao registrar, tente novamente agora ou mais tarde!');
+            console.log(error);
+         });
     };
 
     // Chama quando troca o assunto;
